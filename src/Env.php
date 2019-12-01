@@ -20,7 +20,7 @@ class Env
      * 优先顺序：环境变量 > php.ini 配置
      * @return string
      */
-    public static function evniron()
+    public static function environ()
     {
         return getenv(self::EVN_SYSTEM_ENVIRON) ?: get_cfg_var(self::EVN_SYSTEM_ENVIRON);
     }
@@ -48,7 +48,7 @@ class Env
             $path = get_cfg_var(self::EVN_SYSTEM_CONFIG) . DIRECTORY_SEPARATOR . $name . DIRECTORY_SEPARATOR;
         }
 
-        return $path . self::evniron() . DIRECTORY_SEPARATOR;
+        return $path . self::environ() . DIRECTORY_SEPARATOR;
     }
 
     /**
@@ -59,7 +59,7 @@ class Env
     public static function runtimePath(string $default)
     {
         if (($name = self::name()) && ($systemRuntime = get_cfg_var(self::EVN_SYSTEM_RUNTIME))) {
-            return $systemRuntime . DIRECTORY_SEPARATOR . $name . DIRECTORY_SEPARATOR . self::evniron() . DIRECTORY_SEPARATOR;
+            return $systemRuntime . DIRECTORY_SEPARATOR . $name . DIRECTORY_SEPARATOR . self::environ() . DIRECTORY_SEPARATOR;
         }
 
         return $default;

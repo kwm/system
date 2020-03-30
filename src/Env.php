@@ -14,6 +14,12 @@ class Env
 
     const EVN_SYSTEM_RUNTIME = 'KWM_SYSTEM_RUNTIME_PATH';
 
+    /** @var string 环境配置文件目录 */
+    protected static $configPath;
+
+    /** @var string  runtime 目录 */
+    protected static $runtimePath;
+
     /**
      * 获取当前环境名称
      *
@@ -39,29 +45,37 @@ class Env
      * 获取环境配置文件目录
      *
      * 需要配置系统应用名称后，才会使用独立配置文件
+     * > 第一次获取时，需要传入默认配置文件目录
      * @param string $path 默认配置文件目录
      * @return string
      */
-    public static function configPath(string $path = '')
+    public static function configPath($path = '')
     {
+        if (!is_null(self::$configPath)) {
+            return self::$configPath;
+        }
+
         if ($name = self::name()) {
             $path = get_cfg_var(self::EVN_SYSTEM_CONFIG) . DIRECTORY_SEPARATOR . $name . DIRECTORY_SEPARATOR;
         }
 
-        return $path . self::environ() . DIRECTORY_SEPARATOR;
+        return self::$configPath = $path . self::environ() . DIRECTORY_SEPARATOR;
     }
 
     /**
      * 获取 runtime 目录路径
+     * > 第一次获取时，需要传入默认配置文件目录
      * @param string $default 默认目录路径
      * @return string
      */
-    public static function runtimePath(string $default)
+    public static function runtimePath($default = '')
     {
-        if (($name = self::name()) && ($systemRuntime = get_cfg_var(self::EVN_SYSTEM_RUNTIME))) {
-            return $systemRuntime . DIRECTORY_SEPARATOR . $name . DIRECTORY_SEPARATOR . self::environ() . DIRECTORY_SEPARATOR;
+        if (!is_null(self::$runtimePath)) {
+            return self::$runtimePath;
         }
 
-        return $default;
+        return self::$runtimePath = ($name = self::name()) && ($systemRuntime = get_cfg_var(self::EVN_SYSTEM_RUNTIME))
+            ? $systemRuntime . DIRECTORY_SEPARATOR . $name . DIRECTORY_SEPARATOR . self::environ() . DIRECTORY_SEPARATOR
+            : $default;
     }
 }
